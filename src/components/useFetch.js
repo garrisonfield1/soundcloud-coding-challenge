@@ -18,6 +18,7 @@ const useFetch = (url) => {
       }
     };
     fetchData();
+    
   }, [url]);
 
   return { status, data };

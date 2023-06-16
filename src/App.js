@@ -1,35 +1,37 @@
-// import useFetch from './components/useFetch';
-import useFetchMembersURLs from './components/useFetchMembers';
-// import logo from './logo.svg';
+import useFetch from './components/useFetch';
+import useHouseAndMembersArray from './components/useHouseAndMembers';
+import test from './components/test';
+import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
+  const [pending, setPending ] = useState(true)
 
-  const houseAndMembers = useFetchMembersURLs('https://anapioficeandfire.com/api/houses')
+  const data = useFetch('https://anapioficeandfire.com/api/houses')
+  const houseAndMembers = useHouseAndMembersArray(data.data)
+  const lastIndex = houseAndMembers.length - 1;
+  const fullArray = houseAndMembers.map((house, i) => {
+    async function stuff(){
+      await test(house.swornMembers)
+    }
+    if(i === lastIndex ) setPending(false) 
+    return {
+      house: house, 
+      swornMembers: house.swornMembers ? stuff() : null
+    }
+  })
+
+  console.log('houseAndMembers ', houseAndMembers)
+  console.log('fullArray ', fullArray)
   
-  console.log('houseAndMembers ',houseAndMembers)
-
   return (
     <div className="App">
       <header className="App-header">      
-          {/* {
-            houseAndMembers.status === '200 fetched' ? houseAndMembers.data.map( (house, index) => {
-              return (
-                <>
-                  <div key={house.house} >{house.house}</div>
-                  {house.swornMembers.length ? 
-                    house.swornMembers.map( member => <div>{member}</div>  )  
-                    : 
-                    <div>This house has no sworn members</div>
-                  }
-                </>
-              )
-            })
-          : <img src={logo} className="App-logo" alt="logo" /> 
-          } */}
+          {pending ? fullArray.map( (house) => <div key={house.house} > {house.house}</div>) : <div> nerp </div> }
       </header>        
     </div>
-  );
+  )
 }
 
 export default App;
