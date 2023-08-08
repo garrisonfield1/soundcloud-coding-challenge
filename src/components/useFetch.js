@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
 
+
 const useFetch = (url) => {
-  const [status, setStatus] = useState('idle');
+  const [isResolved, setIsResolved] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     if (!url) return;
+
     const fetchData = async () => {
-      setStatus('fetching');
+      setIsResolved(false);
       const response = await fetch(url);
+      
       if(response.status === 200){
-        const data = await response.json();
-        setData(data);
-        setStatus('200 fetched');
+        const json = await response.json();
+        setData(json);
+        setIsResolved(true);
       }else{
         throw response;
       }
@@ -20,8 +23,7 @@ const useFetch = (url) => {
     fetchData();
     
   }, [url]);
-
-  return { status, data };
+  return { isResolved, data };
 };
 
 export default useFetch;
